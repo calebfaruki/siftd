@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e0638820-c782-4c25-8250-489e92fc2d20"
+      }
+    },
+    "owner": "calebfaruki"
   }
 }
