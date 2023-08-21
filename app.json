@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "siftd",
+    "name": "SIFTD",
     "slug": "siftd",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,17 +11,18 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.siftd.app",
+      "userInterfaceStyle": "dark"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.siftd.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
