@@ -37,3 +37,9 @@ yarn-error.*
 # Android builds
 *.aab
 *.apk
+
+# iOS builds
+*.ipa
+
+# Grokked files
+siftd.*
