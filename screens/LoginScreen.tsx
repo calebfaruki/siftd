@@ -5,8 +5,8 @@ import * as cookies from '../utilities/cookies';
 import { LoginScreenProps } from '../stacks/AccountStack';
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
-  const [email, setEmail] = React.useState('calebfaruki@proton.me');
-  const [password, setPassword] = React.useState('AQM4qrx7rdc1ndu.fcq');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const handleLogin = async () => {
     try {
