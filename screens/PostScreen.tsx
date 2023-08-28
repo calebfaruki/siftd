@@ -1,17 +1,19 @@
 import { useLayoutEffect } from 'react';
-import { View, StyleSheet, Text, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Dimensions, Linking } from 'react-native';
 import WebView from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { PostScreenProps } from '../App';
 import Button from '../components/Button';
+import { useUser } from '../context/user';
 
 // post.sub === minimum dollar value required for patron to view.
 export default function PostScreen(props: PostScreenProps) {
   const post = props.route.params.post;
   const deviceWidth = Dimensions.get('window').width;
   const videoHeight = deviceWidth * (9 / 16);
+  const { user } = useUser();
 
   const isYouTubeLink = (url: string) => {
     const pattern = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/;
@@ -41,6 +43,35 @@ export default function PostScreen(props: PostScreenProps) {
       ),
     });
   }, [props.navigation])
+
+  const hasAccess = () => {
+    if (post.sub === 0) {
+      return true;
+    }
+    if (new Date(post.publishDate).getTime() < new Date().getTime() - 7 * 24 * 60 * 60 * 1000) {
+      return true;
+    }
+    return (user?.subStatus?.access || 0) >= post.sub;
+  };
+
+  if (!hasAccess()) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.paywallText}>
+          This content is for Patrons or trial users only!
+        </Text>
+        <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 10 }}>
+          <Button style={{ backgroundColor: 'white' }} onPress={() => Linking.openURL('https://siftd.net')}>
+            <Text style={{ color: 'black', fontSize: 18 }}>Register on our website</Text>
+          </Button>
+          <View style={{ marginHorizontal: 5 }} />
+          <Button onPress={() => props.navigation.navigate('Login')}>
+            <Text style={{ color: 'white', fontSize: 18 }}>Log In</Text>
+          </Button>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -95,5 +126,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 5,
     color: 'white',
-  }
+  },
+  paywallText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 18,
+    color: 'white',
+  },
 });
