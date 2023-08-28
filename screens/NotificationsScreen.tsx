@@ -1,21 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl } from 'react-native';
-import * as apiClient from '../utilities/apiClient';
+import { useGetNotifications } from '../hooks/useGetNotifications';
 
 export default function NotificationsScreen() {
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const fetchNotifications = async () => {
-    setRefreshing(true);
-    const data = await apiClient.request('/user/getNotifications', 'POST', 'method=user&action=getNotifications');
-    setNotifications(data.notifications || []);
-    setRefreshing(false);
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  const { notifications, refreshing, fetchNotifications } = useGetNotifications();
 
   return (
     <View style={styles.container}>

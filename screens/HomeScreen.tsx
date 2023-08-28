@@ -1,14 +1,13 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect } from 'react';
 import {
   StyleSheet, StatusBar, SafeAreaView, TouchableOpacity, View, Text,
   Dimensions, Platform, FlatList, Image, RefreshControl
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { ItemWrap } from '../types';
-import * as apiClient from '../utilities/apiClient';
 import { HomeScreenProps } from '../App';
 import { useUser } from '../context/user';
 import ensureHttps from '../utilities/ensureHttps';
+import { useGetPosts } from '../hooks/useGetPosts';
 
 const categories = [{
   name: 'Opinion',
@@ -59,26 +58,16 @@ const categories = [{
 
 export default function HomeScreen(props: HomeScreenProps) {
   const isTablet = Dimensions.get('window').width >= 768
-  const [posts, setPosts] = useState<ItemWrap[]>([])
-  const [refreshing, setRefreshing] = useState(false);
+  const { posts, refreshing, fetchPosts } = useGetPosts();
   const { user } = useUser();
-
-  const fetchPosts = async () => {
-    setRefreshing(true);
-    const data = await apiClient.request('/content/getSift', 'POST', null);
-    setPosts(data.items);
-    setRefreshing(false);
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
 
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerLeft: () => (
         user ? (
-          <TouchableOpacity onPress={() => props.navigation.navigate('Profile')}>
+          <TouchableOpacity onPress={() => {
+            props.navigation.navigate('Profile')
+          }}>
             <Image
               source={{ uri: ensureHttps(user.avatar) }}
               style={{ width: 24, height: 24 }}
@@ -116,8 +105,8 @@ export default function HomeScreen(props: HomeScreenProps) {
           />
         }
         renderItem={({ item: post }) => {
+          const sourceImageUrl = (post.item.xSourceId?.savedIcon && `https://d2qvhu25iogxie.cloudfront.net/${post.item.xSourceId?.savedIcon}`) || post.item.xSourceId?.icon || 'https://siftd.net/images/favicon.ico'
           const category = categories.find((cat) => post.item.categories.find((category) => cat.name === category))
-
           return (
             <TouchableOpacity
               style={styles.item}
@@ -128,7 +117,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 borderTopLeftRadius: 8, borderTopRightRadius: 8, backgroundColor: category?.color
               }}>
                 <Text style={{
-                  color: 'white', fontWeight: '500', textTransform: 'uppercase', textAlign: 'right', letterSpacing: 2
+                  color: 'white', fontWeight: '900', textTransform: 'uppercase', textAlign: 'right', letterSpacing: 2
                 }}>
                   {category?.name}
                 </Text>
@@ -149,7 +138,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               </View>
               <View style={{ flexDirection: 'row', padding: 8, backgroundColor: '#151515' }}>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
-                  <Image style={{ width: 18, height: 18 }} source={{ uri: post.item.xSourceId?.icon || 'https://siftd.net/images/favicon.ico' }} />
+                  <Image style={{ width: 16, height: 16 }} source={{ uri: sourceImageUrl }} />
                   <Text style={{ color: 'white', marginLeft: 8 }}>
                     {post.item.xSourceId?.name || 'SIFTD'}
                   </Text>
@@ -157,22 +146,21 @@ export default function HomeScreen(props: HomeScreenProps) {
                 <Text style={{ flex: 1, color: 'white' }}>
                   {new Date(post.item.date).toLocaleDateString()}
                 </Text>
-                <View style={{ flex: 1 }}>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Text style={{ color: 'white', flex: 1, textAlign: 'center' }}>
-                      {post.item.bookmarks}
-                    </Text>
-                    <Text style={{ color: 'white', flex: 1, textAlign: 'center' }}>
-                      {post.item.oneups}
-                    </Text>
-                    <Text style={{ color: 'white', flex: 1, textAlign: 'center' }}>
-                      {post.item.comments}
-                    </Text>
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                    <Ionicons name="bookmark" color="#fff" size={12} style={{ marginRight: 5 }} />
+                    <Text style={{ color: 'white', textAlign: 'center' }}>{post.item.bookmarks}</Text>
+                  </View>
+                  <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                    <Ionicons name="arrow-up" color="#fff" size={12} style={{ marginRight: 5 }} />
+                    <Text style={{ color: 'white', textAlign: 'center' }}>{post.item.oneups}</Text>
+                  </View>
+                  <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                    <Ionicons name="chatbubble" color="#fff" size={12} style={{ marginRight: 5 }} />
+                    <Text style={{ color: 'white', textAlign: 'center' }}>{post.item.comments}</Text>
                   </View>
                 </View>
               </View>
-              {/* second row: blurb */}
-              {/* third row: source, date, then bookmark count, like count, comment count */}
             </TouchableOpacity>
           )
         }}

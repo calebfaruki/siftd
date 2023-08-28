@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { CommentsScreenProps } from '../App';
 import { Comment } from '../types';
@@ -133,6 +133,5 @@ const styles = StyleSheet.create({
   toggleButtonText: {
     color: 'white',
     fontSize: 14,
-  },
-
+  }
 });

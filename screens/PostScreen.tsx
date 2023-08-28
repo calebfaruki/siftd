@@ -1,14 +1,17 @@
 import { useLayoutEffect } from 'react';
-import { View, StyleSheet, Text, Button, TouchableHighlight } from 'react-native';
+import { View, StyleSheet, Text, Dimensions } from 'react-native';
 import WebView from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { PostScreenProps } from '../App';
+import Button from '../components/Button';
 
 // post.sub === minimum dollar value required for patron to view.
 export default function PostScreen(props: PostScreenProps) {
   const post = props.route.params.post;
+  const deviceWidth = Dimensions.get('window').width;
+  const videoHeight = deviceWidth * (9 / 16);
 
   const isYouTubeLink = (url: string) => {
     const pattern = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/;
@@ -43,21 +46,24 @@ export default function PostScreen(props: PostScreenProps) {
     <View style={styles.container}>
       {isYouTubeLink(post.xArticle) ? (
         <>
-          <YoutubePlayer videoId={extractVideoId(post.xArticle)} height={250} />
+          <YoutubePlayer videoId={extractVideoId(post.xArticle)} width={deviceWidth} height={videoHeight} />
           <Text style={styles.title}>{post.title}</Text>
           <Text style={styles.body}>Published on {new Date(post.publishDate).toLocaleDateString()}</Text>
           <Text style={styles.body}>{post.blurb}</Text>
-          <TouchableHighlight onPress={() => props.navigation.navigate('Comments', { postId: post._id })}>
-            <View style={styles.button}>
-              <Ionicons
-                name="chatbubble-ellipses-outline"
-                size={24}
-                color="#fff"
-                style={styles.buttonIcon}
-              />
-              <Text style={styles.buttonText}>Comments</Text>
-            </View>
-          </TouchableHighlight>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+            <Button style={{ flexGrow: 1, marginTop: 10 }} onPress={() => props.navigation.navigate('Comments', { postId: post._id })}>
+              <Ionicons name="chatbubble-ellipses-outline" color="#fff" size={18} style={{ marginRight: 10 }} />
+              <Text style={{ color: 'white', fontSize: 14 }}>Comments</Text>
+            </Button>
+            <Button style={{ flexGrow: 1, marginTop: 10 }} onPress={() => console.log('Upvote')}>
+              <Ionicons name="arrow-up" color="#fff" size={18} style={{ marginRight: 10 }} />
+              <Text style={{ color: 'white', fontSize: 14 }}>Upvote</Text>
+            </Button>
+            <Button style={{ flexGrow: 1, marginTop: 10 }} onPress={() => console.log('Upvote')}>
+              <Ionicons name="bookmark-outline" color="#fff" size={18} style={{ marginRight: 10 }} />
+              <Text style={{ color: 'white', fontSize: 14 }}>Bookmark</Text>
+            </Button>
+          </View>
         </>
       ) : (
         <WebView source={{ uri: post.xArticle }} style={{ flex: 1 }} />
@@ -89,21 +95,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 5,
     color: 'white',
-  },
-  button: {
-    marginTop: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  buttonIcon: {
-    marginRight: 10,
-  },
-  buttonText: {
-    color: 'white'
   }
 });

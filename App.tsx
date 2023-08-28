@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StatusBar, Image, Text } from 'react-native';
+import { StatusBar, Image } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps, createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -52,6 +52,7 @@ function HomeStack() {
       initialRouteName="Start"
       screenOptions={() => ({
         headerTitleAlign: 'center',
+        headerBackTitleVisible: false,
         headerTitle: () => (
           <Image
             source={require('./assets/icon-transparent.png')}

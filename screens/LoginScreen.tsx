@@ -15,7 +15,6 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       const [cookie, user] = await apiClient.login(email, password);
       await cookies.set(cookie as string);
       setUser(user)
-      Alert.alert('Success', 'Logged in successfully!');
       navigation.popToTop();
     } catch (error) {
       Alert.alert('Error', 'Login failed. Please check your credentials.');
@@ -27,13 +26,17 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       <TextInput
         style={styles.input}
         placeholder="Email"
+        textContentType="emailAddress"
         keyboardType="email-address"
+        autoCapitalize="none"
+        autoComplete="email"
         value={email}
         onChangeText={setEmail}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
+        textContentType="password"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -52,6 +55,7 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderColor: 'gray',
+    color: 'white',
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
