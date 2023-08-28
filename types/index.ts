@@ -4,7 +4,7 @@ export type ItemWrap = {
 };
 
 export type Item = {
-  xSourceId: any;
+  __v: any;
   _id: any;
   title: any;
   blurb: any;
@@ -13,16 +13,10 @@ export type Item = {
   sub: any;
   freeUntil: any;
   notes: any;
-  xArticle: any;
-  xVideo: any;
-  xSource: any;
-  sVideo: any;
-  sArticle: any;
   preview: any;
   previewId: any;
-  author: any;
+  author: User;
   publishTime: any;
-  __v: any;
   bookmarks: any;
   oneups: any;
   comments: any;
@@ -31,7 +25,7 @@ export type Item = {
   eval: any;
   sGallery: any;
   tags: any;
-  categories: any;
+  categories: string[];
   games: any;
   twitter: any;
   facebook: any;
@@ -40,6 +34,20 @@ export type Item = {
   published: any;
   publishDate: any;
   date: string;
+  xArticle: any;
+  xVideo: any;
+  sVideo: any;
+  sArticle: any;
+  xSource: string;
+  xSourceId: {
+    __v: number;
+    _id: string;
+    feed: string;
+    icon: string;
+    name: string;
+    savedIcon: string;
+    site: string;
+  };
 };
 
 export type User = {
@@ -138,26 +146,7 @@ export type Comment = {
   text: string;
   content: number;
   blog: any | null;
-  author: {
-    _id: string;
-    avatar: string;
-    joinDate: string;
-    gravatar: string;
-    username: string;
-    lastOnline: string;
-    bigTipper: boolean;
-    social: {
-      patreon: {
-        amount: number;
-      };
-    };
-    banned: boolean;
-    admin: number;
-    subType: number;
-    xp: {
-      level: number;
-    };
-  };
+  author: User;
   __v: number;
   history: string[];
   deleted: boolean;

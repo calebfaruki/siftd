@@ -1,32 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import * as apiClient from '../utilities/apiClient';
-import { CommentsScreenProps } from '../stacks/HomeStack';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
+import { CommentsScreenProps } from '../App';
 import { Comment } from '../types';
+import CommentAvatar from '../components/CommentAvatar';
+import useGetComments from '../hooks/useGetComments';
+import { MaterialIcons } from '@expo/vector-icons';
 
-export default function CommentsScreen({ route }: CommentsScreenProps) {
-  const [comments, setComments] = useState<Comment[]>([]);
+export default function CommentsScreen({ route, navigation }: CommentsScreenProps) {
   const postId = route.params.postId;
+  const { comments, refreshing, fetchComments } = useGetComments(postId);
+  const [expandedComments, setExpandedComments] = useState<string[]>([]);
 
-  useEffect(() => {
-    async function fetchComments() {
-      try {
-        const body: string = `method=comment&action=get&data%5Bcontent%5D=${postId}`;
-        const data = await apiClient.request('/comment/get', 'POST', body);
-        setComments(data.comments);
-      } catch (error) {
-        console.error("Failed to fetch comments:", error);
-      }
-    }
-
-    fetchComments();
-  }, [postId]);
-
-  // 1. Separate Top-Level Comments from Child Comments
   const topLevelComments = comments.filter(comment => !comment.parent);
   const childComments = comments.filter(comment => comment.parent);
 
-  // 2. Construct a Comment Tree
   function findChildren(parentId: string): Comment[] {
     const directChildren = childComments.filter(comment => comment.parent === parentId);
     directChildren.forEach(child => {
@@ -39,43 +26,113 @@ export default function CommentsScreen({ route }: CommentsScreenProps) {
     comment.children = findChildren(comment._id);
   });
 
-  const renderComment = ({ item }: { item: Comment }) => (
-    <View style={styles.commentContainer}>
-      <Text style={styles.commentAuthor}>{item.author.username}</Text>
-      <Text style={styles.commentText}>{item.text}</Text>
-      {item.children && item.children.length > 0 && (
-        <FlatList
-          data={item.children}
-          renderItem={renderComment}
-          keyExtractor={(comment) => comment._id.toString()}
-          style={styles.childComment}
+  const toggleCommentExpansion = (commentId: string) => {
+    if (expandedComments.includes(commentId)) {
+      setExpandedComments(prev => prev.filter(id => id !== commentId));
+    } else {
+      setExpandedComments(prev => [...prev, commentId]);
+    }
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <MaterialIcons
+          name="add-comment"
+          size={24}
+          color="#fff"
+          onPress={() => console.log('New Comment')}
         />
-      )}
-    </View>
-  );
+      ),
+    });
+  }, [navigation]);
+
+  const renderComment = ({ item }: { item: Comment }) => {
+    const isExpanded = expandedComments.includes(item._id);
+    return (
+      <View style={styles.comment}>
+        <View style={{ flexDirection: 'row' }}>
+          <CommentAvatar author={item.author} />
+          <View style={styles.commentHeading}>
+            <Text style={styles.commentAuthor}>{item.author.username}</Text>
+            <Text style={{ color: 'white' }}>{item.author.bigTipper && 'ELITE'}</Text>
+          </View>
+          <Text style={styles.commentAuthor}>+{item.ups - item.downs}</Text>
+        </View>
+        <Text style={styles.commentText}>{item.text}</Text>
+        {item.children && item.children.length > 0 && (
+          <>
+            <TouchableOpacity onPress={() => toggleCommentExpansion(item._id)} style={styles.toggleButton}>
+              <Text style={styles.toggleButtonText}>
+                {isExpanded ? 'Hide Replies' : 'Show Replies'}
+              </Text>
+            </TouchableOpacity>
+            {isExpanded && (
+              <FlatList
+                data={item.children}
+                renderItem={renderComment}
+                keyExtractor={(comment) => comment._id.toString()}
+                style={styles.childComment}
+              />
+            )}
+          </>
+        )}
+      </View>
+    );
+  };
 
   return (
     <FlatList
       data={topLevelComments}
       renderItem={renderComment}
       keyExtractor={(comment) => comment._id.toString()}
+      ListEmptyComponent={<Text style={styles.loading}>No comments yet!</Text>}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={fetchComments} />
+      }
     />
   );
 }
 
 const styles = StyleSheet.create({
-  commentContainer: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+  comment: {
+    paddingTop: 20,
+    paddingHorizontal: 10,
+  },
+  loading: {
+    flex: 1,
+    textAlign: 'center',
+    marginTop: 20,
+    color: 'white',
+  },
+  commentHeading: {
+    marginLeft: 5,
+    flex: 1,
   },
   commentAuthor: {
     fontWeight: 'bold',
+    color: 'white',
+    fontSize: 16
   },
   commentText: {
     marginTop: 5,
+    color: 'white',
   },
   childComment: {
-    marginLeft: 20,
+    color: 'white',
+    borderLeftWidth: 1,
+    borderLeftColor: '#ddd',
   },
+  toggleButton: {
+    marginTop: 10,
+    padding: 5,
+    backgroundColor: '#333',
+    borderRadius: 5,
+    alignSelf: 'center',
+  },
+  toggleButtonText: {
+    color: 'white',
+    fontSize: 14,
+  },
+
 });

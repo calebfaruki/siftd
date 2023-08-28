@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { View, ScrollView, Text, StyleSheet, Image, ImageBackground, SectionList, TouchableOpacity } from 'react-native';
-import { ProfileScreenProps } from '../stacks/AccountStack';
+import { ProfileScreenProps } from '../App';
+import { useUser } from '../context/user';
+import ensureHttps from '../utilities/ensureHttps';
 
 const profileLinks = [{
   title: 'Menu',
@@ -8,7 +10,7 @@ const profileLinks = [{
 }]
 
 export default function ProfileScreen(props: ProfileScreenProps) {
-  const user = props.route.params.user
+  const { user } = useUser();
 
   const handleNavigation = (item: string) => {
     switch (item) {
@@ -29,38 +31,42 @@ export default function ProfileScreen(props: ProfileScreenProps) {
     }
   }
 
-  return (
-    <>
-      <ImageBackground
-        source={{ uri: `https://d2qvhu25iogxie.cloudfront.net/${user.bannerUrl}` }}
-        style={styles.backgroundImage}
-      >
-        <View style={styles.centeredContent}>
-          <Image
-            style={styles.avatar}
-            source={{ uri: `https:${user.avatar}` }}
+  if (!user) {
+    props.navigation.navigate('Login')
+  } else {
+    return (
+      <>
+        <ImageBackground
+          source={{ uri: `https://d2qvhu25iogxie.cloudfront.net/${user.bannerUrl}` }}
+          style={styles.backgroundImage}
+        >
+          <View style={styles.centeredContent}>
+            <Image
+              style={styles.avatar}
+              source={{ uri: ensureHttps(user.avatar) }}
+            />
+            <Text style={styles.username}>{user.username}</Text>
+          </View>
+        </ImageBackground>
+        <ScrollView style={styles.container}>
+          <SectionList
+            sections={profileLinks}
+            scrollEnabled={false}
+            style={{ width: '100%' }}
+            keyExtractor={(item, index) => item + index}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.listItem} onPress={() => handleNavigation(item)}>
+                <Text style={styles.listItemText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={styles.sectionHeader}>{title}</Text>
+            )}
           />
-          <Text style={styles.username}>{user.username}</Text>
-        </View>
-      </ImageBackground>
-      <ScrollView style={styles.container}>
-        <SectionList
-          sections={profileLinks}
-          scrollEnabled={false}
-          style={{ width: '100%' }}
-          keyExtractor={(item, index) => item + index}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.listItem} onPress={() => handleNavigation(item)}>
-              <Text style={styles.listItemText}>{item}</Text>
-            </TouchableOpacity>
-          )}
-          renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.sectionHeader}>{title}</Text>
-          )}
-        />
-      </ScrollView>
-    </>
-  );
+        </ScrollView>
+      </>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -100,6 +106,7 @@ const styles = StyleSheet.create({
   },
   listItem: {
     padding: 15,
+    color: 'white',
     borderBottomWidth: 1,
     borderBottomColor: '#d1d1d1',
   },

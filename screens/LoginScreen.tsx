@@ -2,9 +2,11 @@ import * as React from 'react';
 import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import * as apiClient from '../utilities/apiClient';
 import * as cookies from '../utilities/cookies';
-import { LoginScreenProps } from '../stacks/AccountStack';
+import { LoginScreenProps } from '../App';
+import { useUser } from '../context/user';
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
+  const { setUser } = useUser();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
@@ -12,11 +14,9 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     try {
       const [cookie, user] = await apiClient.login(email, password);
       await cookies.set(cookie as string);
-      Alert.alert('Success', 'Logged in successfully!')
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Profile', params: { user } }],
-      })
+      setUser(user)
+      Alert.alert('Success', 'Logged in successfully!');
+      navigation.popToTop();
     } catch (error) {
       Alert.alert('Error', 'Login failed. Please check your credentials.');
     }

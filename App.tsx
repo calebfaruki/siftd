@@ -1,34 +1,84 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons';
-import AccountStack from './stacks/AccountStack';
-import HomeStack from './stacks/HomeStack';
+import { useEffect } from 'react';
+import { StatusBar, Image, Text } from 'react-native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps, createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Item } from './types';
+import * as apiClient from './utilities/apiClient';
+import { UserProvider, useUser } from './context/user';
+import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import PostScreen from './screens/PostScreen';
+import CommentsScreen from './screens/CommentsScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
+import SiftdTheme from './themes/SiftdTheme';
 
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<HomeStackParamList>();
+const Drawer = createDrawerNavigator();
+
+export type HomeStackParamList = {
+  Start: undefined;
+  Login: undefined;
+  Profile: undefined;
+  Post: { post: Item };
+  Comments: { postId: number };
+  Notifications: undefined;
+};
+
+export type HomeScreenProps = NativeStackScreenProps<HomeStackParamList, 'Start'>;
+export type LoginScreenProps = NativeStackScreenProps<HomeStackParamList, 'Login'>;
+export type ProfileScreenProps = NativeStackScreenProps<HomeStackParamList, 'Profile'>;
+export type PostScreenProps = NativeStackScreenProps<HomeStackParamList, 'Post'>;
+export type CommentsScreenProps = NativeStackScreenProps<HomeStackParamList, 'Comments'>;
+export type NotificationsScreenProps = NativeStackScreenProps<HomeStackParamList, 'Notifications'>;
+
+function HomeStack() {
+  const navigation = useNavigation();
+  const { setUser } = useUser();
+
+  useEffect(() => {
+    async function checkAuthentication() {
+      const data = await apiClient.request('/user/autologin', 'GET', null);
+      if (data.login) {
+        setUser(data.user);
+      }
+    }
+    checkAuthentication();
+  }, [navigation]);
+
+  return (
+    <Stack.Navigator
+      initialRouteName="Start"
+      screenOptions={() => ({
+        headerTitleAlign: 'center',
+        headerTitle: () => (
+          <Image
+            source={require('./assets/icon-transparent.png')}
+            style={{ width: 40, height: 40, resizeMode: 'contain' }}
+          />
+        ),
+      })}
+    >
+      <Stack.Screen name="Start" component={HomeScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Post" component={PostScreen} />
+      <Stack.Screen name="Comments" component={CommentsScreen} />
+      <Stack.Screen name="Notifications" component={NotificationsScreen} />
+    </Stack.Navigator>
+  );
+}
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator initialRouteName="Home" screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName = 'newspaper';
-
-          if (route.name === 'Home') {
-            iconName = focused ? 'newspaper' : 'newspaper';
-            return <FontAwesome5 name="newspaper" size={size} color={color} />
-          } else if (route.name === 'Profile') {
-            return <Ionicons name="person-circle-outline" size={size} color={color} />
-          }
-        },
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray'
-      })}>
-        <Tab.Screen name="Home" component={HomeStack} />
-        <Tab.Screen name="Account" component={AccountStack} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <UserProvider>
+      <NavigationContainer theme={SiftdTheme}>
+        <StatusBar barStyle="light-content" />
+        <Drawer.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+          <Drawer.Screen name="Home" component={HomeStack} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </UserProvider>
   );
 }
