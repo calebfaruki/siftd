@@ -3,7 +3,6 @@ import { StatusBar, Image } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps, createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Item } from './types';
 import * as apiClient from './utilities/apiClient';
 import { UserProvider, useUser } from './context/user';
 import HomeScreen from './screens/HomeScreen';
@@ -21,7 +20,7 @@ export type HomeStackParamList = {
   Start: undefined;
   Login: undefined;
   Profile: undefined;
-  Post: { post: Item };
+  Post: { post: IPost };
   Comments: { postId: number };
   Notifications: undefined;
 };

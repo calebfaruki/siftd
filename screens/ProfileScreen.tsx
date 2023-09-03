@@ -3,28 +3,47 @@ import { View, ScrollView, Text, StyleSheet, Image, ImageBackground, SectionList
 import { ProfileScreenProps } from '../App';
 import { useUser } from '../context/user';
 import ensureHttps from '../utilities/ensureHttps';
+import cookieManager from '../utilities/cookieManager';
 
 const profileLinks = [{
-  title: 'Menu',
-  data: ['Notifications', 'Messages', 'Achievements', 'Bookmarks']
+  data: [
+    'Notifications',
+    'Messages',
+    'SIFT Ratings',
+    'Eval Ratings',
+    'Achievements',
+    'Bookmarks',
+    'Logout'
+  ]
 }]
 
 export default function ProfileScreen(props: ProfileScreenProps) {
-  const { user } = useUser();
+  const { user, setUser } = useUser();
 
-  const handleNavigation = (item: string) => {
+  const handleNavigation = async (item: string) => {
     switch (item) {
       case 'Notifications':
-        // props.navigation.navigate('Notifications')
+        props.navigation.navigate('Notifications')
         break;
       case 'Messages':
         // props.navigation.navigate('Messages')
+        break;
+      case 'SIFT Ratings':
+        // props.navigation.navigate('SIFTRatings')
+        break;
+      case 'Eval Ratings':
+        // props.navigation.navigate('EvalRatings')
         break;
       case 'Achievements':
         // props.navigation.navigate('Achievements')
         break;
       case 'Bookmarks':
         // props.navigation.navigate('Bookmarks')
+        break;
+      case 'Logout':
+        await cookieManager.remove()
+        setUser(undefined)
+        props.navigation.navigate('Start')
         break;
       default:
         break;
@@ -58,9 +77,6 @@ export default function ProfileScreen(props: ProfileScreenProps) {
               <TouchableOpacity style={styles.listItem} onPress={() => handleNavigation(item)}>
                 <Text style={styles.listItemText}>{item}</Text>
               </TouchableOpacity>
-            )}
-            renderSectionHeader={({ section: { title } }) => (
-              <Text style={styles.sectionHeader}>{title}</Text>
             )}
           />
         </ScrollView>
@@ -99,18 +115,13 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 5,
   },
-  sectionHeader: {
-    padding: 10,
-    backgroundColor: '#f7f7f7',
-    fontWeight: 'bold',
-  },
   listItem: {
     padding: 15,
-    color: 'white',
     borderBottomWidth: 1,
     borderBottomColor: '#d1d1d1',
   },
   listItemText: {
     fontSize: 16,
+    color: 'white',
   },
 });

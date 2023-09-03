@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import * as apiClient from '../utilities/apiClient';
-import { ItemWrap } from '../types';
 
 export const useGetPosts = () => {
-  const [posts, setPosts] = useState<ItemWrap[]>([]);
+  const [posts, setPosts] = useState<IPostWrap[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchPosts = async () => {

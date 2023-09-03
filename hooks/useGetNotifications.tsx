@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as apiClient from '../utilities/apiClient';
 
 export const useGetNotifications = () => {
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<INotification[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchNotifications = async () => {

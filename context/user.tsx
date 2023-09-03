@@ -1,9 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { User } from '../types';
 
 type UserContextType = {
-  user: User | undefined;
-  setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
+  user: IUser | undefined;
+  setUser: React.Dispatch<React.SetStateAction<IUser | undefined>>;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -13,7 +12,7 @@ type UserProviderProps = {
 };
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | undefined>();
+  const [user, setUser] = useState<IUser | undefined>();
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

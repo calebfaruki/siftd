@@ -112,10 +112,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               style={styles.item}
               onPress={() => props.navigation.navigate('Post', { post: post.item })}
             >
-              <View style={{
-                flexDirection: 'row', paddingHorizontal: 8, paddingTop: 6, paddingBottom: 4,
-                borderTopLeftRadius: 8, borderTopRightRadius: 8, backgroundColor: category?.color
-              }}>
+              <View style={[styles.itemPreheader, { backgroundColor: category?.color }]}>
                 <Text style={{
                   color: 'white', fontWeight: '900', textTransform: 'uppercase', textAlign: 'right', letterSpacing: 2
                 }}>
@@ -179,9 +176,15 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    margin: 8,
+    margin: 15,
     backgroundColor: 'white',
     borderRadius: 8,
+  },
+  itemPreheader: {
+    flexDirection: 'row',
+    padding: 6,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
   },
   itemTitle: {
     flex: 1,

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import * as apiClient from '../utilities/apiClient';
-import * as cookies from '../utilities/cookies';
 import { LoginScreenProps } from '../App';
 import Button from '../components/Button';
 import { useUser } from '../context/user';
@@ -13,8 +12,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
   const handleLogin = async () => {
     try {
-      const [cookie, user] = await apiClient.login(email, password);
-      await cookies.set(cookie as string);
+      const [_cookie, user] = await apiClient.login(email, password);
       setUser(user)
       navigation.popToTop();
     } catch (error) {
@@ -42,7 +40,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         value={password}
         onChangeText={setPassword}
       />
-      <Button onPress={() => handleLogin}>
+      <Button onPress={() => handleLogin()}>
         <Text style={{ color: 'white', fontSize: 18 }}>Login</Text>
       </Button>
     </View>

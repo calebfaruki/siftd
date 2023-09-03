@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Comment } from '../types';
 import * as apiClient from '../utilities/apiClient';
 
 export default function useGetComments(postId: number) {
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<IComment[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchComments = useCallback(async () => {

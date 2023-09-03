@@ -1,7 +1,6 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { CommentsScreenProps } from '../App';
-import { Comment } from '../types';
 import CommentAvatar from '../components/CommentAvatar';
 import useGetComments from '../hooks/useGetComments';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -14,7 +13,7 @@ export default function CommentsScreen({ route, navigation }: CommentsScreenProp
   const topLevelComments = comments.filter(comment => !comment.parent);
   const childComments = comments.filter(comment => comment.parent);
 
-  function findChildren(parentId: string): Comment[] {
+  function findChildren(parentId: string): IComment[] {
     const directChildren = childComments.filter(comment => comment.parent === parentId);
     directChildren.forEach(child => {
       child.children = findChildren(child._id);
@@ -47,7 +46,7 @@ export default function CommentsScreen({ route, navigation }: CommentsScreenProp
     });
   }, [navigation]);
 
-  const renderComment = ({ item }: { item: Comment }) => {
+  const renderComment = ({ item }: { item: IComment }) => {
     const isExpanded = expandedComments.includes(item._id);
     return (
       <View style={styles.comment}>

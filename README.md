@@ -59,6 +59,27 @@ For iOS:
 npm run ios
 ```
 
+### Build archives locally:
+
+Android
+
+```sh
+eas build -p android --local --profile preview
+```
+
 ## Bug Reports and Feature Requests
 
 If you encounter any bugs or have a feature request, please file it under the [GitHub Issues](https://github.com/calebfaruki/siftd/issues) section of this repository. Ensure to provide as much detail as possible to help in addressing the issue or request.
+
+###
+
+```sh
+npx uglify-js siftd.min.js -b --source-map "filename='siftd.min.map'" -o siftd.js
+```
+
+### Debug
+
+```
+npx react-native log-android
+npm run android
+```
