@@ -1,6 +1,5 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
-import { CommentsScreenProps } from '../App';
 import CommentAvatar from '../components/CommentAvatar';
 import useGetComments from '../hooks/useGetComments';
 import { MaterialIcons } from '@expo/vector-icons';

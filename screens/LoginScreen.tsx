@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import * as apiClient from '../utilities/apiClient';
-import { LoginScreenProps } from '../App';
 import Button from '../components/Button';
 import { useUser } from '../context/user';
 

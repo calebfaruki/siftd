@@ -4,7 +4,6 @@ import {
   Dimensions, Platform, FlatList, Image, RefreshControl
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { HomeScreenProps } from '../App';
 import { useUser } from '../context/user';
 import ensureHttps from '../utilities/ensureHttps';
 import { useGetPosts } from '../hooks/useGetPosts';

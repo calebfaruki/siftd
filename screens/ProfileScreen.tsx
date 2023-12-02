@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { View, ScrollView, Text, StyleSheet, Image, ImageBackground, SectionList, TouchableOpacity } from 'react-native';
-import { ProfileScreenProps } from '../App';
 import { useUser } from '../context/user';
 import ensureHttps from '../utilities/ensureHttps';
 import cookieManager from '../utilities/cookieManager';
@@ -29,7 +28,7 @@ export default function ProfileScreen(props: ProfileScreenProps) {
         // props.navigation.navigate('Messages')
         break;
       case 'SIFT Ratings':
-        // props.navigation.navigate('SIFTRatings')
+        props.navigation.navigate('SIFTRatings')
         break;
       case 'Eval Ratings':
         // props.navigation.navigate('EvalRatings')

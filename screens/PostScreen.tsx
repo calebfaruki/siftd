@@ -4,7 +4,6 @@ import WebView from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import YoutubePlayer from 'react-native-youtube-iframe';
-import { PostScreenProps } from '../App';
 import Button from '../components/Button';
 import { useUser } from '../context/user';
 
