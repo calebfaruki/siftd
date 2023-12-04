@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } fr
 import CommentAvatar from '../components/CommentAvatar';
 import useGetComments from '../hooks/useGetComments';
 import { MaterialIcons } from '@expo/vector-icons';
+import LoadingView from '../components/LoadingView';
 
 export default function CommentsScreen({ route, navigation }: CommentsScreenProps) {
   const postId = route.params.postId;
@@ -79,7 +80,7 @@ export default function CommentsScreen({ route, navigation }: CommentsScreenProp
     );
   };
 
-  return (
+  return refreshing ? <LoadingView /> : (
     <FlatList
       data={topLevelComments}
       renderItem={renderComment}

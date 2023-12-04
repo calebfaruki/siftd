@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { View, StyleSheet, Text, Dimensions, Linking } from 'react-native';
 import WebView from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,6 +6,8 @@ import { Octicons } from '@expo/vector-icons';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import Button from '../components/Button';
 import { useUser } from '../context/user';
+import LoadingView from '../components/LoadingView';
+
 
 // post.sub === minimum dollar value required for patron to view.
 export default function PostScreen(props: PostScreenProps) {
@@ -13,6 +15,7 @@ export default function PostScreen(props: PostScreenProps) {
   const deviceWidth = Dimensions.get('window').width;
   const videoHeight = deviceWidth * (9 / 16);
   const { user } = useUser();
+  const [isLoading, setLoading] = useState(true);
 
   const isYouTubeLink = (url: string) => {
     const pattern = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/;
@@ -74,9 +77,15 @@ export default function PostScreen(props: PostScreenProps) {
 
   return (
     <View style={styles.container}>
+      {isLoading && <LoadingView />}
       {isYouTubeLink(post.xArticle) ? (
         <>
-          <YoutubePlayer videoId={extractVideoId(post.xArticle)} width={deviceWidth} height={videoHeight} />
+          <YoutubePlayer
+            videoId={extractVideoId(post.xArticle)}
+            width={deviceWidth}
+            height={videoHeight}
+            onReady={() => setLoading(false)}
+          />
           <Text style={styles.title}>{post.title}</Text>
           <Text style={styles.body}>Published on {new Date(post.publishDate).toLocaleDateString()}</Text>
           <Text style={styles.body}>{post.blurb}</Text>
@@ -96,7 +105,7 @@ export default function PostScreen(props: PostScreenProps) {
           </View>
         </>
       ) : (
-        <WebView source={{ uri: post.xArticle }} style={{ flex: 1 }} />
+        <WebView source={{ uri: post.xArticle }} style={{ flex: 1 }} onLoadEnd={() => setLoading(false)} />
       )}
     </View>
   );

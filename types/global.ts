@@ -2,8 +2,8 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 export {};
 
 declare global {
-  type HomeStackParamList = {
-    Start: undefined;
+  type StackParamList = {
+    Home: undefined;
     Login: undefined;
     Profile: undefined;
     Post: { post: IPost };
@@ -12,23 +12,23 @@ declare global {
     SIFTRatings: undefined;
   };
 
-  type HomeScreenProps = NativeStackScreenProps<HomeStackParamList, "Start">;
-  type LoginScreenProps = NativeStackScreenProps<HomeStackParamList, "Login">;
+  type HomeScreenProps = NativeStackScreenProps<StackParamList, "Home">;
+  type LoginScreenProps = NativeStackScreenProps<StackParamList, "Login">;
   type ProfileScreenProps = NativeStackScreenProps<
-    HomeStackParamList,
+    StackParamList,
     "Profile"
   >;
-  type PostScreenProps = NativeStackScreenProps<HomeStackParamList, "Post">;
+  type PostScreenProps = NativeStackScreenProps<StackParamList, "Post">;
   type CommentsScreenProps = NativeStackScreenProps<
-    HomeStackParamList,
+    StackParamList,
     "Comments"
   >;
   type NotificationsScreenProps = NativeStackScreenProps<
-    HomeStackParamList,
+    StackParamList,
     "Notifications"
   >;
   type SIFTRatingsScreenProps = NativeStackScreenProps<
-    HomeStackParamList,
+    StackParamList,
     "SIFTRatings"
   >;
 

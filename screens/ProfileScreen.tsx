@@ -42,7 +42,7 @@ export default function ProfileScreen(props: ProfileScreenProps) {
       case 'Logout':
         await cookieManager.remove()
         setUser(undefined)
-        props.navigation.navigate('Start')
+        props.navigation.navigate('Home')
         break;
       default:
         break;

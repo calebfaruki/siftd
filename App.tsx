@@ -5,19 +5,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import * as apiClient from './utilities/apiClient';
 import { UserProvider, useUser } from './context/user';
-import HomeScreen from './screens/HomeScreen';
-import LoginScreen from './screens/LoginScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import PostScreen from './screens/PostScreen';
-import CommentsScreen from './screens/CommentsScreen';
-import NotificationsScreen from './screens/NotificationsScreen';
 import SiftdTheme from './themes/SiftdTheme';
-import SIFTRatingsScreen from './screens/SIFTRatingsScreen';
+import * as Screens from './screens';
 
-const Stack = createNativeStackNavigator<HomeStackParamList>();
-const Drawer = createDrawerNavigator();
+type RootStackParamList = {
+  Root: undefined
+}
+const Stack = createNativeStackNavigator<StackParamList>();
+const Drawer = createDrawerNavigator<RootStackParamList>();
 
-function HomeStack() {
+function RootStack() {
   const navigation = useNavigation();
   const { setUser } = useUser();
 
@@ -33,7 +30,7 @@ function HomeStack() {
 
   return (
     <Stack.Navigator
-      initialRouteName="Start"
+      initialRouteName="Home"
       screenOptions={() => ({
         headerTitleAlign: 'center',
         headerBackTitleVisible: false,
@@ -45,13 +42,13 @@ function HomeStack() {
         ),
       })}
     >
-      <Stack.Screen name="Start" component={HomeScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="Post" component={PostScreen} />
-      <Stack.Screen name="Comments" component={CommentsScreen} />
-      <Stack.Screen name="Notifications" component={NotificationsScreen} />
-      <Stack.Screen name="SIFTRatings" component={SIFTRatingsScreen} />
+      <Stack.Screen name="Home" component={Screens.HomeScreen} />
+      <Stack.Screen name="Login" component={Screens.LoginScreen} />
+      <Stack.Screen name="Profile" component={Screens.ProfileScreen} />
+      <Stack.Screen name="Post" component={Screens.PostScreen} />
+      <Stack.Screen name="Comments" component={Screens.CommentsScreen} />
+      <Stack.Screen name="Notifications" component={Screens.NotificationsScreen} />
+      <Stack.Screen name="SIFTRatings" component={Screens.SIFTRatingsScreen} />
     </Stack.Navigator>
   );
 }
@@ -61,10 +58,10 @@ export default function App() {
     <UserProvider>
       <NavigationContainer theme={SiftdTheme}>
         <StatusBar barStyle="light-content" />
-        <Drawer.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-          <Drawer.Screen name="Home" component={HomeStack} />
+        <Drawer.Navigator initialRouteName="Root" screenOptions={{ headerShown: false }}>
+          <Drawer.Screen name="Root" component={RootStack} />
         </Drawer.Navigator>
       </NavigationContainer>
     </UserProvider>
-  );
+  )
 }
